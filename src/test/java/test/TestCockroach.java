@@ -3,6 +3,7 @@ package test;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CockroachContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -16,8 +17,22 @@ import static org.testng.Assert.assertTrue;
 
 public class TestCockroach
 {
-    @Test(timeOut = 10_000, invocationCount = 10)
+    @BeforeClass(timeOut = 60_000)
+    public void setup()
+            throws SQLException
+    {
+        // run with longer timeout to allow for image download
+        verifyCockroach();
+    }
+
+    @Test(timeOut = 10_000, invocationCount = 100)
     public void testCockroach()
+            throws SQLException
+    {
+        verifyCockroach();
+    }
+
+    private void verifyCockroach()
             throws SQLException
     {
         CockroachContainer container = new CockroachContainer("cockroachdb/cockroach:v21.1.11");
